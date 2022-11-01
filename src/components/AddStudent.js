@@ -7,6 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import { toHaveStyle } from '@testing-library/jest-dom/dist/matchers';
 
 
 // properties addCoure is required, function called when Add clicked.
@@ -41,16 +42,30 @@ class AddStudent extends Component {
           email: this.state.email     
         })
       })
-      .then(response => response.json() )
-      .then(responseData => { console.log(responseData)})
-      .catch(err => console.error(err))
-       this.handleClose();
+      .then(response => {
+        if (response.ok){
+          toast.success("Student added successfully.",{
+            position: toast.POSITION.BOTTOM_LEFT
+          });
+        } else {
+          toast.error("Student already exists.",{
+            position: toast.POSITION.BOTTOM_LEFT
+          });
+        }
+      })
+      .catch(err => {
+        toast.error("Error occured",{
+          position: toast.POSITION.BOTTOM_LEFT
+        });
+        console.error(err);
+      })
+      this.handleClose();
     }
 
     render()  { 
       return (
           <div>
-            <Button variant="outlined" color="primary" style={{margin: 10}} onClick={this.handleClickOpen}>
+            <Button id="AddStudentBtn" variant="outlined" color="primary" style={{margin: 10}} onClick={this.handleClickOpen}>
               Add Student
             </Button>
             <Dialog open={this.state.open} onClose={this.handleClose}>
@@ -63,7 +78,8 @@ class AddStudent extends Component {
                   <Button color="secondary" onClick={this.handleClose}>Cancel</Button>
                   <Button id="Add" color="primary" onClick={this.handleAdd}>Add</Button>
                 </DialogActions>
-              </Dialog>      
+              </Dialog>
+              <ToastContainer autoClose={1500} />         
           </div>
       ); 
     }
